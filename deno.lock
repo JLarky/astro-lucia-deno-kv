@@ -6,7 +6,8 @@
       "@astrojs/deno": "@astrojs/deno@4.1.1_astro@2.6.2__@babel+core@7.22.5__vite@4.3.9",
       "astro": "astro@2.6.2_@babel+core@7.22.5_vite@4.3.9",
       "astro@2.6.2": "astro@2.6.2_@babel+core@7.22.5_vite@4.3.9",
-      "astro@^2.5.6": "astro@2.6.2_@babel+core@7.22.5_vite@4.3.9"
+      "astro@^2.5.6": "astro@2.6.2_@babel+core@7.22.5_vite@4.3.9",
+      "lucia-auth": "lucia-auth@1.8.0"
     },
     "packages": {
       "@ampproject/remapping@2.2.1": {
@@ -1555,6 +1556,10 @@
         "dependencies": {
           "yallist": "yallist@4.0.0"
         }
+      },
+      "lucia-auth@1.8.0": {
+        "integrity": "sha512-zI8gT2AOpxTPIxYzToEdgoht+GOflrduZiHPsOEmg4/2pThOyCW3o3lXh+Uwh20tJ9QoXwQe9/Omn6PlUG6efw==",
+        "dependencies": {}
       },
       "magic-string@0.27.0": {
         "integrity": "sha512-8UnnX2PeRAPZuN12svgR9j7M1uWMovg/CEnIwIG0LFkXSJJe4PdfUGiTGl8V9bsBHFUtfVINcSyYxd7q+kx9fA==",

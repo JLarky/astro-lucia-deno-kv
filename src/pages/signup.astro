@@ -1,0 +1,66 @@
+---
+// pages/signup.astro
+import { getAuth } from "../lib/lucia";
+
+export const prerender = false;
+
+const auth = getAuth(await Deno.openKv());
+const authRequest = auth.handleRequest(Astro);
+
+const url = new URL(Astro.request.url);
+const search = new URLSearchParams(url.search);
+
+let message = search.get("message") || "";
+
+if (Astro.request.method === "POST") {
+  // csrf check
+  const requestOrigin = Astro.request.headers.get("origin");
+  const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+  if (!isValidRequest) {
+    return new Response(null, {
+      status: 403,
+    });
+  }
+  const form = await Astro.request.formData();
+  const username = form.get("username");
+  const password = form.get("password");
+  // check for empty values
+  if (typeof username === "string" && typeof password === "string") {
+    try {
+      const user = await auth.createUser({
+        primaryKey: {
+          providerId: "username",
+          providerUserId: username,
+          password,
+        },
+        attributes: {
+          username,
+        },
+      });
+      console.log("user created", user);
+      const session = await auth.createSession(user.userId);
+      authRequest.setSession(session); // set session cookie
+      return Astro.redirect("/", 302); // redirect on successful attempt
+    } catch (e) {
+      // throw e;
+      message = "" + e;
+
+      // username taken
+      Astro.response.status = 400;
+    }
+  } else {
+    Astro.response.status = 400;
+  }
+}
+---
+
+<h1>Create an account</h1>
+<a href="/login">Login</a>
+{message && <p>{message}</p>}
+<form method="post">
+  <label for="username">username</label><br />
+  <input id="username" name="username" /><br />
+  <label for="password">password</label><br />
+  <input type="password" id="password" name="password" /><br />
+  <input type="submit" value="Continue" />
+</form>

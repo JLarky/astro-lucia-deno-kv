@@ -1,8 +1,13 @@
 {
+  "imports": {
+    "lucia-auth": "npm:lucia-auth"
+  },
   "tasks": {
-    "dev": "deno run -A npm:astro dev",
-    "build": "deno run --allow-read --allow-env --allow-sys --allow-net --allow-write --allow-run npm:astro build",
-    "preview": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs"
+    "dev": "deno run -A --unstable npm:astro dev",
     "types": "mkdir -p src/types; deno types --unstable > src/types/lib.deno.d.ts",
+    "patch": "patch node_modules/.deno/undici@5.22.1/node_modules/undici/lib/fetch/index.js undici_5.22.1.patch",
+    "build": "deno run --allow-read --allow-env --allow-sys --allow-net --allow-write --allow-run --unstable npm:astro build",
+    "deploy": "(cd dist/; deployctl deploy --prod --project=lucia-deno-kv-demo server/entry.mjs)",
+    "preview": "deno run --allow-net --allow-read --allow-env --unstable ./dist/server/entry.mjs"
   }
 }

@@ -1,0 +1,63 @@
+---
+// pages/login.astro
+import { LuciaError } from "lucia-auth";
+import { getAuth } from "../lib/lucia";
+
+export const prerender = false;
+
+const auth = getAuth(await Deno.openKv());
+const authRequest = auth.handleRequest(Astro);
+
+// redirect to profile page if authenticated
+const { session } = await authRequest.validateUser();
+if (session) {
+  return Astro.redirect("/", 302);
+}
+
+let message = "";
+
+if (Astro.request.method === "POST") {
+  // csrf check
+  const requestOrigin = Astro.request.headers.get("origin");
+  const isValidRequest = !!requestOrigin && requestOrigin === Astro.url.origin;
+  if (!isValidRequest) {
+    return new Response(null, {
+      status: 403,
+    });
+  }
+  const form = await Astro.request.formData();
+  const username = form.get("username");
+  const password = form.get("password");
+  // check for empty values
+  if (typeof username === "string" && typeof password === "string") {
+    try {
+      const key = await auth.useKey("username", username, password);
+      const session = await auth.createSession(key.userId);
+      authRequest.setSession(session);
+      return Astro.redirect("/", 302); // redirect on successful attempt
+    } catch (e) {
+      if (e instanceof LuciaError && e.message === "AUTH_INVALID_KEY_ID") {
+        // user not found
+        return Astro.redirect("/signup?message=user+is+not+found", 302);
+      }
+      message = "Failed to sign in";
+      // throw e;
+      // invalid username/password
+      Astro.response.status = 400;
+    }
+  } else {
+    Astro.response.status = 400;
+  }
+}
+---
+
+<h1>Sign in</h1>
+<a href="/signup">Sign up</a>
+{message && <p>{message}</p>}
+<form method="post">
+  <label for="username">username</label><br />
+  <input id="username" name="username" /><br />
+  <label for="password">password</label><br />
+  <input type="password" id="password" name="password" /><br />
+  <input type="submit" value="Continue" />
+</form>
