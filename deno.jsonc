@@ -3,5 +3,6 @@
     "dev": "deno run -A npm:astro dev",
     "build": "deno run --allow-read --allow-env --allow-sys --allow-net --allow-write --allow-run npm:astro build",
     "preview": "deno run --allow-net --allow-read --allow-env ./dist/server/entry.mjs"
+    "types": "mkdir -p src/types; deno types --unstable > src/types/lib.deno.d.ts",
   }
 }
