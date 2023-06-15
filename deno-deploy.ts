@@ -1,5 +1,21 @@
-// import { serve } from "https://deno.land/std@0.155.0/http/server.ts";
+const p = Deno.run({ cmd: ["deno", "task", "build"] });
 
-// serve((req: Request) => Response.redirect("https://twitter.com/trashh_dev/status/1596262670411264001"));
+await p.status();
 
-throw new Error("doesn't work yet");
+console.log(p);
+
+const p2 = Deno.run({ cmd: ["ls", "-l"] });
+
+await p2.status();
+
+console.log(p2);
+
+const p3 = Deno.run({ cmd: ["pwd"] });
+
+await p3.status();
+
+console.log(p3);
+
+console.error(`Starting on http://localhost:8085`);
+
+await import("./dist/server/entry.mjs");
